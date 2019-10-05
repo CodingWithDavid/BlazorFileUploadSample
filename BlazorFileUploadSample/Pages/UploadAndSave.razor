@@ -1,0 +1,30 @@
+﻿@page "/UploadAndSave"
+
+<h1>UploadAndSave</h1>
+
+<p>A single file input that uploads automatically on file selection and will be saved to the server</p>
+
+<InputFile OnChange="HandleSelection" />
+
+<p>@status</p>
+
+@code {
+    string status;
+
+    async Task HandleSelection(IFileListEntry[] files)
+    {
+        var file = files.FirstOrDefault();
+        if (file != null)
+        {
+            var ms = new MemoryStream();
+            await file.Data.CopyToAsync(ms);
+            using (FileStream newFile = new FileStream("" + file.Name, FileMode.Create, FileAccess.Write))
+            {
+                ms.WriteTo(newFile);
+            }
+        }
+        status = $"Finished loading {file.Size} bytes from {file.Name}";
+    }
+}
+
+

@@ -1,0 +1,73 @@
+﻿@page "/FileUpload"
+
+
+    <h1>FileUpload</h1>
+
+    <p>A single file input that uploads automatically on file selection.  Images and Text files will be displayed on the page</p>
+
+    <InputFile OnChange="HandleSelection" />
+
+    <p>@status</p>
+
+    @if (!string.IsNullOrEmpty(imageDataURL))
+    {
+        <img src="@imageDataURL" style="height:300px;width:300px" />
+    }
+    else if (!string.IsNullOrEmpty(fileTextContents))
+    {
+        <pre>@fileTextContents</pre>
+    }
+
+    @code {
+        string status;
+        string imageDataURL = "";
+        string fileTextContents = "";
+
+        async Task HandleSelection(IFileListEntry[] files)
+        {
+            imageDataURL = "";
+            fileTextContents = "";
+            var file = files.FirstOrDefault();
+            if (file != null)
+            {
+                //check to see if the file is an image or a text file
+                var fileType = GetFileType(file.Name);
+                if (fileType == "image")
+                {
+                    var ms = new MemoryStream();
+                    await file.Data.CopyToAsync(ms);
+                    string imageBase64Data = Convert.ToBase64String(ms.ToArray());
+                    imageDataURL = string.Format("data:image/png;base64,{0}", imageBase64Data);
+
+                    using (FileStream newFile = new FileStream("wwwroot\\uploads\\" + file.Name, FileMode.Create, FileAccess.Write))
+                    {
+                        ms.WriteTo(newFile);
+                    }
+                }
+                else if (fileType == "text")
+                {
+                    using (var reader = new StreamReader(file.Data))
+                    {
+                        fileTextContents = await reader.ReadToEndAsync();
+                    }
+                }
+            }
+
+            status = $"Finished loading {file.Size} bytes from {file.Name}";
+        }
+
+        private string GetFileType(string name)
+        {
+            string result = "";
+            if (name.Contains("png") || name.Contains("jpg") || name.Contains("gif"))
+            {
+                result = "image";
+            }
+            else if (name.Contains("txt"))
+            {
+                result = "text";
+            }
+            return result;
+        }
+    }
+
