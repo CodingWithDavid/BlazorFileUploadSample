@@ -26,7 +26,7 @@ a.	With Visual Code you will need to install the C# extensions
 
 ## What's in the App
 
-Shows how to upload a files to the server.  It also shows some adidtional things you can do with the files once uploaded. 
+Shows how to upload a files to the server.  It also shows some additional things you can do with the files once uploaded. 
 
 ## Problems or Suggestions
 
