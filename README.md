@@ -1,4 +1,4 @@
-# Blazor Components
+# Blazor File Upload Sample
 
 This project was created to help me learn about uploading files to the server, playing with memory streams and writing to the server folder structure in a Blazor Application.
 
